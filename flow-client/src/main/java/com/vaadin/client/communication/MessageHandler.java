@@ -558,6 +558,11 @@ public class MessageHandler {
     }
 
     private void forceMessageHandling() {
+        // Clear previous request if it exists. Otherwise resyncrhonize can trigger
+        // "Trying to start a new request while another is active" exception and fail.
+        if (registry.getRequestResponseTracker().hasActiveRequest()) {
+            registry.getRequestResponseTracker().endRequest();
+        }
         if (!responseHandlingLocks.isEmpty()) {
             // Lock which was never release -> bug in locker or things just
             // too slow
@@ -805,7 +810,8 @@ public class MessageHandler {
         this.nextResponseSessionExpiredHandler = nextResponseSessionExpiredHandler;
     }
 
-    public void onResynchronize() {
+    // Called by MessageSender when resyncronize starts
+    protected void onResynchronize() {
         resyncInProgress = true;
     }
 }
