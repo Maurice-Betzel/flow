@@ -175,6 +175,17 @@ public class FrontendUtils {
      * File name of the index.js in client side.
      */
     public static final String INDEX_JS = "index.js";
+    
+    
+    /**
+     * Prefix for the client side bundle entry point.
+     */
+    public static final String INDEX_BUNDLE_PREFIX = "bundle";
+
+    /**
+     * Prefix for the generated flow-dependencies bundle entry point.
+     */
+    public static final String FLOW_BUNDLE_PREFIX = "flow";
 
     /**
      * Default Java source folder for OpenAPI generator.

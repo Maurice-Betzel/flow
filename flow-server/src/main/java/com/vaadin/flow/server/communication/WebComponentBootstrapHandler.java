@@ -298,10 +298,12 @@ public class WebComponentBootstrapHandler extends BootstrapHandler {
                 || "style".equals(element.tagName())) {
             return true;
         } else {
-            // embedding context should not provide polyfill, it is left to the
-            // end-user
             return "script".equals(element.tagName())
-                    && element.attr("src").contains("webcomponents-loader.js");
+                    // embedding context should not provide polyfill, it is left
+                    // to the end-user
+                    && (element.attr("src").contains("webcomponents-loader.js")
+                            // embedding context should not load vaadin-bundle but vaadin-wc
+                            || element.attr("src").contains("vaadin-bundle"));
         }
     }
 

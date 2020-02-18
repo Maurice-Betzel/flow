@@ -45,9 +45,11 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.DocumentType;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.parser.Parser;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
+import org.jsoup.select.NodeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -400,7 +402,7 @@ public class BootstrapHandler extends SynchronizedRequestHandler {
          * The following URI schemes are supported:
          * <ul>
          * <li><code>{@value ApplicationConstants#CONTEXT_PROTOCOL_PREFIX}</code>
-         * - resolves to the application context root</li> 
+         * - resolves to the application context root</li>
          * <li><code>{@value ApplicationConstants#BASE_PROTOCOL_PREFIX}</code> -
          * resolves to the base URI of the page</li>
          * </ul>
@@ -430,6 +432,21 @@ public class BootstrapHandler extends SynchronizedRequestHandler {
                 response::setDateHeader);
 
         Document document = pageBuilder.getBootstrapPage(context);
+        document.head().children().filter(new NodeFilter() {
+            @Override
+            public FilterResult head(Node node, int depth) {
+                if (node.hasAttr("src") && node.attributes().get("src").contains("vaadin-wc")) {
+                    return FilterResult.REMOVE;
+                }
+                return FilterResult.CONTINUE;
+            }
+
+            @Override
+            public FilterResult tail(Node node, int depth) {
+                return FilterResult.CONTINUE;
+            }
+
+        });
         writeBootstrapPage(response, document.outerHtml());
 
         return true;

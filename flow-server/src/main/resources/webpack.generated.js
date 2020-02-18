@@ -79,7 +79,8 @@ module.exports = {
   mode: 'production',
   context: frontendFolder,
   entry: {
-    bundle: useClientSideIndexFileForBootstrapping ? clientSideIndexEntryPoint : fileNameOfTheFlowGeneratedMainEntryPoint
+    bundle: useClientSideIndexFileForBootstrapping ? clientSideIndexEntryPoint : fileNameOfTheFlowGeneratedMainEntryPoint,
+    wc: fileNameOfTheFlowGeneratedMainEntryPoint
   },
 
   output: {
@@ -136,7 +137,7 @@ module.exports = {
   },
   plugins: [
     // Generate compressed bundles when not devMode
-    ...(devMode ? [] : [new CompressionPlugin()]),
+    devMode && new CompressionPlugin(),
 
     // Generates the stats file for flow `@Id` binding.
     function (compiler) {
@@ -179,7 +180,8 @@ module.exports = {
     // Includes JS output bundles into "index.html"
     useClientSideIndexFileForBootstrapping && new HtmlWebpackPlugin({
       template: clientSideIndexHTML,
-      inject: 'head'
+      inject: 'head',
+      chunks: ['bundle']
     }),
     useClientSideIndexFileForBootstrapping && new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'defer'
